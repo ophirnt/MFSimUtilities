@@ -99,17 +99,22 @@ function tarball_maker(CompressorStream, output_path::String)
 
 end
 
-function list_output_files_for_export(output_path::String)
+function list_output_files_for_export(output_path::String, nhdf5s::Integer)
     files = readdir(output_path)
     hdf5s = files[endswith.(files, r".hdf5")]
     non_hdf5s = files[.!endswith.(files, r".hdf5")]
 
-    [hdf5s[[1, 2, end]]; non_hdf5s]
+    case_hdf5s = length(hdf5s)
+
+    indices = range(1, case_hdf5s, length=nhdf5s) |> collect .|> floor .|> Int64
+
+
+    [hdf5s[indices]; non_hdf5s]
 end
 
 "Gets a case output's folder first and last time step and the other files inside of it, and exports to a .tar.xz file."
-function export_case_output(output_path::String, export_path::String, CompressorStream = XzCompressorStream)
-    files = list_output_files_for_export(output_path)
+function export_case_output(output_path::String, export_path::String, nhdf5s::Integer, CompressorStream = XzCompressorStream)
+    files = list_output_files_for_export(output_path, nhdf5s)
     
     mktempdir() do temp_dir
         for file in files
