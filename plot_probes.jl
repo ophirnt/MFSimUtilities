@@ -4,11 +4,15 @@ using Plots
 path = "/media/ophir/WDBLUE1/Interpolação_RTS/"
 probeTop = "output/probe_points/surf00001_sonda00001.dat"
 
+newProbe = "/home/ophir/MFLab/MFSim-cases/dev/cavidade_termica/cavidade_termica_interpolacao/testes_yucel/3a_rodada/radiatingThermalCavity"
+
 amr3 = "Ra5e6_Pl0p02_tau1_w0_2D_48_32_AMR3_1p/"
 patches2 = "Ra5e6_Pl0p02_tau1_w0_2D_48_48_1n_2p/"
 niveis2 = "Ra5e6_Pl0p02_tau1_w0_2D_48_48_2n_2p/"
 cfdmaior = "Ra5e6_Pl0p02_tau1_w0_2D_64_32_1n_1p/"
 cfdmenor = "Ra5e6_Pl0p02_tau1_w0_2D_64_80_1n_1p/"
+
+probeNew = Probe(newProbe * "/" * probeTop)
 
 probeamr = Probe(path * amr3 * probeTop)
 probepatches = Probe(path * patches2 * probeTop)
@@ -28,7 +32,7 @@ end
 #     export_case_output(path * name * "output", path * name[1:end-1] * ".tar.xz")
 # end
 
-live_plot_probe!(probeamr, plot_probe, 90)
+live_plot_probe!(probeNew, plot_probe, 90)
 
 
 # while true

@@ -89,6 +89,9 @@ function live_plot_probe!(probe::Probe, plot_function, time::Integer = 30)
     end
 end
 
+################################################################################################
+
+
 function tarball_maker(CompressorStream, output_path::String)
 
     function dir_processor(input_path::String)
@@ -99,22 +102,31 @@ function tarball_maker(CompressorStream, output_path::String)
 
 end
 
-function list_output_files_for_export(output_path::String, nhdf5s::Integer)
+function list_output_files_for_export(output_path::String, nhdf5s::Integer, include_header::Bool)
     files = readdir(output_path)
-    hdf5s = files[endswith.(files, r".hdf5")]
+    
+    hdf5s = files[endswith.(files, r".hdf5")] |> sort
+    header_hdf5s = hdf5s[1:2]
+    hdf5s = hdf5s[3:end]
+    
     non_hdf5s = files[.!endswith.(files, r".hdf5")]
-
+    
     case_hdf5s = length(hdf5s)
+    indices = nhdf5s == 1 ? [case_hdf5s] : range(1, case_hdf5s, length=nhdf5s) |> collect .|> floor .|> Int64
 
-    indices = range(1, case_hdf5s, length=nhdf5s) |> collect .|> floor .|> Int64
 
+   files_list = [hdf5s[indices]; non_hdf5s]
 
-    [hdf5s[indices]; non_hdf5s]
+   if include_header
+        files_list = [files_list; header_hdf5s]
+   end
+
+   files_list
 end
 
 "Gets a case output's folder first and last time step and the other files inside of it, and exports to a .tar.xz file."
-function export_case_output(output_path::String, export_path::String, nhdf5s::Integer, CompressorStream = XzCompressorStream)
-    files = list_output_files_for_export(output_path, nhdf5s)
+function export_case_output(output_path::String, export_path::String, nhdf5s::Integer, include_header::Bool, CompressorStream = XzCompressorStream)
+    files = list_output_files_for_export(output_path, nhdf5s, include_header)
     
     mktempdir() do temp_dir
         for file in files
