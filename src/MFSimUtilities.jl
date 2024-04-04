@@ -146,6 +146,13 @@ function export_full_case(case_path::String, export_path::String, nhdf5s::Intege
     @show files
 
     mktempdir() do temp_dir
+
+        for (root, dirs, files) in walkdir(case_path)
+            for dir in dirs
+                 mkpath(joinpath(temp_dir, dir))
+            end
+       end
+
         for file in files
             file_path = case_path * "/" * file
             cp(file_path, temp_dir * "/" * file)

@@ -67,7 +67,7 @@ if length(ARGS) == 0
 else
     @match ARGS[1] begin
         "plot_probe"  => run_command(plot_probe, ARGS[2:end])
-        "export_case" => run_command(export_full_case, ARGS[2:end])
+        "export_case" => run_command(export_case, ARGS[2:end])
         "help"        => print_instructions("")
         _             => print_instructions("ERROR: Unrecognized command")
     end
