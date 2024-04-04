@@ -20,6 +20,8 @@ Available commands:
 - plot_probe <probe_path> <update_interval>
 
 - export_case <case_output_path> <path_to_tarball> <number_of_hdf5s> <include first and second hdf5?>
+
+- setup_case <case_path> IN DEVELOPMENT
 " |> print
 
 end
