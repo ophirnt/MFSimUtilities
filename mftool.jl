@@ -8,6 +8,22 @@ function probePlot(probe)
     display(plot(pu, pt, layout = (1,2), legend = false))
 end
 
+function print_instructions()
+
+"MFTool - A MFSim case management tool by Ophir Neto - Release version 04/04/2024 
+
+Usage:
+
+\$ julia mftool.jl <COMMAND> [ARGS]
+
+Available commands:
+
+plot_probe <probe_path> <update_interval>
+export_case <case_output_path> <path_to_tarball> <number_of_hdf5s> <include first and second hdf5?>
+" |> print
+
+end
+
 function plot_probe(args)
     probe = Probe(args[1])
     time = parse(Int64, args[2])
@@ -22,8 +38,9 @@ function export_case(args)
 end
 
 @match ARGS[1] begin
-    "plot_probe" => plot_probe(ARGS[2:end])
+    "plot_probe"  => plot_probe(ARGS[2:end])
     "export_case" => export_case(ARGS[2:end])
+    _             => print_instructions()
 end
 
 #function_call()
