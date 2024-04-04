@@ -1,6 +1,6 @@
 module MFSimUtilities
 
-export ResultFile, update_lines!, live_read_file!, create_probe_df!, update_probe_df!, live_plot_probe!, read_file, Probe, export_case_output
+export ResultFile, update_lines!, live_read_file!, create_probe_df!, update_probe_df!, live_plot_probe!, read_file, Probe, export_case_output, export_full_case
 
 using DataFrames, Tar, CodecXz
 
@@ -138,6 +138,22 @@ function export_case_output(output_path::String, export_path::String, nhdf5s::In
 
 end
 
+
+function export_full_case(case_path::String, export_path::String, nhdf5s::Integer, include_header::Bool, CompressorStream = XzCompressorStream)
+    files = "output/" .* list_output_files_for_export("$case_path/output", nhdf5s, include_header)
+    files = [files; "input"; "geo"; "probes"; "restart"]
+
+    @show files
+
+    mktempdir() do temp_dir
+        for file in files
+            file_path = case_path * "/" * file
+            cp(file_path, temp_dir * "/" * file)
+        end
+        tarball_maker(CompressorStream, export_path)(temp_dir)
+    end
+
+end
 
 
 # function live_plot_probe(file::ResultFile, x, y, timeout = 1)
