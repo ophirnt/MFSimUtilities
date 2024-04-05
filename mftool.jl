@@ -59,6 +59,11 @@ function export_case(args)
     export_case_output(args[1], args[2], nhdf5s, include_header)
 end
 
+function adjust_cfg(args)
+    print("Adjusting cfg file $args[1] for case directory $args[2]")
+    adjust_cfg_file!(args[1], args[2])
+end
+
 ##########################################################################################################################
 
 if length(ARGS) == 0
@@ -68,6 +73,7 @@ else
     @match ARGS[1] begin
         "plot_probe"  => run_command(plot_probe, ARGS[2:end])
         "export_case" => run_command(export_case, ARGS[2:end])
+        "adjust_cfg"  => run_command(adjust_cfg, ARGS[2:end])
         "help"        => print_instructions("")
         _             => print_instructions("ERROR: Unrecognized command")
     end

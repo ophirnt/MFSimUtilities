@@ -162,6 +162,26 @@ function export_full_case(case_path::String, export_path::String, nhdf5s::Intege
 
 end
 
+#################################################################################################################
+
+"Writes down correct paths to case directory in the cfg file."
+function adjust_cfg_file!(cfg_path::String, case_path::String)
+    cfg_template = 
+    """input_path: \"$case_path/input\"
+    geo_path: \"$case_path/geo\"
+    output_path: \"$case_path/output\"
+    restart_path: \"$case_path/restart\"
+    probes_path: \"$case_path/probes\"\n\n"""
+
+    cfg = open(cfg_path, "r")
+        old_cfg = read(cfg, String)
+    close(cfg)
+    new_cfg = cfg_template * old_cfg
+    open(cfg_path, "w") do cfg
+        write(cfg, new_cfg)
+    end
+end
+
 
 # function live_plot_probe(file::ResultFile, x, y, timeout = 1)
 #     probe = create_probe_df!(file)
