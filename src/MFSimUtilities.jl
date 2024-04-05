@@ -1,6 +1,6 @@
 module MFSimUtilities
 
-export ResultFile, update_lines!, live_read_file!, create_probe_df!, update_probe_df!, live_plot_probe!, read_file, Probe, export_case_output, export_full_case
+export ResultFile, update_lines!, live_read_file!, create_probe_df!, update_probe_df!, live_plot_probe!, read_file, Probe, export_case_output, export_full_case, record_mfsim_version
 
 using DataFrames, Tar, CodecXz
 
@@ -138,12 +138,17 @@ function export_case_output(output_path::String, export_path::String, nhdf5s::In
 
 end
 
-"Exports an MFSim case to a tarbal. Defaults to a compression in lzma."
+"Exports an MFSim case to a tarball. Defaults to a compression in lzma."
 function export_full_case(case_path::String, export_path::String, nhdf5s::Integer, include_header::Bool, compressor = "xz")
     files = "output/" .* list_output_files_for_export("$case_path/output", nhdf5s, include_header)
     files = [files; "input"; "geo"; "probes"; "restart"]
-
+    
     `tar -I $compressor -cvf $export_path -C $case_path $files` |> run
+end
+
+"Writes down MFSim-cmake version information to the root of the case file for documentation."
+function record_mfsim_version(mfsim_path::String, case_path::String)
+
 end
 
 #################################################################################################################
