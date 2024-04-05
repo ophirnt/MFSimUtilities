@@ -7,7 +7,7 @@ using Match
 function print_instructions(message)
 
 "MFTool - A MFSim case management tool by Ophir Neto
-Release version 04/04/2024 
+Release version 05/04/2024 
 
 $(message)
 
@@ -19,9 +19,9 @@ Available commands:
 
 - plot_probe <probe_path> <update_interval>
 
-- export_case <case_output_path> <path_to_tarball> <number_of_hdf5s> <include first and second hdf5?>
+- export_case <case_path> <path_to_tarball> <number_of_hdf5s> <include first and second hdf5?> [compressor]
 
-- setup_case <case_path> IN DEVELOPMENT
+- adjust_cfg <cfg_path> <case_path>
 " |> print
 
 end
@@ -56,7 +56,7 @@ function export_case(args)
     print("Exporting output from case $(args[1])")
     nhdf5s = parse(Int64, args[3])
     include_header = parse(Bool, args[4])
-    export_case_output(args[1], args[2], nhdf5s, include_header)
+    length(args) == 4 ? export_full_case(args[1], args[2], nhdf5s, include_header) : export_full_case(args[1], args[2], nhdf5s, include_header, args[5])
 end
 
 function adjust_cfg(args)

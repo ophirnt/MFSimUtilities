@@ -91,7 +91,7 @@ end
 
 ################################################################################################
 
-
+"Generates a tarball. DEPRECATED"
 function tarball_maker(CompressorStream, output_path::String)
 
     function dir_processor(input_path::String)
@@ -124,7 +124,7 @@ function list_output_files_for_export(output_path::String, nhdf5s::Integer, incl
    files_list
 end
 
-"Gets a case output's folder first and last time step and the other files inside of it, and exports to a .tar.xz file."
+"Gets a case output's folder first and last time step and the other files inside of it, and exports to a .tar.xz file. DEPRECATED "
 function export_case_output(output_path::String, export_path::String, nhdf5s::Integer, include_header::Bool, CompressorStream = XzCompressorStream)
     files = list_output_files_for_export(output_path, nhdf5s, include_header)
     
@@ -138,28 +138,12 @@ function export_case_output(output_path::String, export_path::String, nhdf5s::In
 
 end
 
-
-function export_full_case(case_path::String, export_path::String, nhdf5s::Integer, include_header::Bool, CompressorStream = XzCompressorStream)
+"Exports an MFSim case to a tarbal. Defaults to a compression in lzma."
+function export_full_case(case_path::String, export_path::String, nhdf5s::Integer, include_header::Bool, compressor = "xz")
     files = "output/" .* list_output_files_for_export("$case_path/output", nhdf5s, include_header)
     files = [files; "input"; "geo"; "probes"; "restart"]
 
-    @show files
-
-    mktempdir() do temp_dir
-
-        for (root, dirs, files) in walkdir(case_path)
-            for dir in dirs
-                 mkpath(joinpath(temp_dir, dir))
-            end
-       end
-
-        for file in files
-            file_path = case_path * "/" * file
-            cp(file_path, temp_dir * "/" * file)
-        end
-        tarball_maker(CompressorStream, export_path)(temp_dir)
-    end
-
+    `tar -I $compressor -cvf $export_path -C $case_path $files` |> run
 end
 
 #################################################################################################################
